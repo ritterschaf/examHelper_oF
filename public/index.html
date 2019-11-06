@@ -1,0 +1,59 @@
+<html lang="de">
+<link rel="manifest" href="manifest.json">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!--Importing the font here-->
+    <link href="https://fonts.googleapis.com/css?family=Lexend+Exa&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/styles.css">
+    <title>ExamHelper</title>
+    <!--<script src="js/examHelper.js"></script>-->
+    <script type="text/javascript" src="require-master/require.js"></script>
+    <script src="js/examHelper.js"></script>
+    <script src="service-worker.js"></script>
+</head>
+
+<body>
+<h1>ExamHelper</h1>
+<div class="tab">
+    <button class="tablinks" onclick="v.openTab(event, 'question')">Frage eingeben</button>
+    <button class="tablinks" onclick="v.openTab(event, 'exam')">Prüfen</button>
+    <button class="tablinks" onclick="v.openTab(event, 'statistic')">Statistik</button>
+</div>
+
+<div id="question" class="tabcontent active">
+    <h3>Frage eingeben</h3>
+
+    <textarea id="q_text" row="3" placeholder="Frage eingeben"></textarea>
+    <input type="text" id="q_ansA" name="q_ansA" placeholder="Antwort A/Lösung">
+    <input type="text" id="q_ansB" name="q_ansB" placeholder="Antwort B">
+    <input type="text" id="q_ansC" name="q_ansC" placeholder="Antwort C">
+    <input type="text" id="q_ansD" name="q_ansD" placeholder="Antwort D">
+    <label for="text">Textfrage</label>
+    <input type="radio" value="text" id="text" name="q_type">
+    <label for="math">Formelfrage</label>
+    <input type="radio" id="math" value="math" name="q_type">
+    <label for="sheet">Notenfrage</label>
+    <input type="radio" value="sheet" id="sheet" name="q_type">
+    <br>
+    <button class="save" onclick="v.saveQuestionV()">Speichern</button>
+
+</div>
+
+<div id="exam" class="tabcontent">
+    <h3>Prüfen</h3>
+
+
+
+</div>
+
+<div id="statistic" class="tabcontent">
+    <h3>Statistik</h3>
+
+</div>
+
+</body>
+
+</html>

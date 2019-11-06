@@ -1,0 +1,14 @@
+{
+  "name": "examHelper_oF",
+  "version": "1.0.0",
+  "main": "server.js",
+  "directories": "",
+  "dependencies": {
+    "http-server": "^0.11.1",
+    "katex": "^0.11.1",
+    "ngrok": "^3.2.5",
+    "sqlite3": "latest",
+    "stream-browserify": "^2.0.2",
+    "vexflow": "^1.2.89"
+  }
+}
