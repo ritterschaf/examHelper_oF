@@ -1,18 +1,23 @@
+<!DOCTYPE html>
 <html lang="de">
 <link rel="manifest" href="manifest.json">
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <!--Importing the font here-->
     <link href="https://fonts.googleapis.com/css?family=Lexend+Exa&display=swap" rel="stylesheet">
 
+
     <link rel="stylesheet" href="css/styles.css">
     <title>ExamHelper</title>
     <!--<script src="js/examHelper.js"></script>-->
+
     <script type="text/javascript" src="require-master/require.js"></script>
     <script src="js/examHelper.js"></script>
     <script src="service-worker.js"></script>
+
+
 </head>
 
 <body>
@@ -38,7 +43,7 @@
     <label for="sheet">Notenfrage</label>
     <input type="radio" value="sheet" id="sheet" name="q_type">
     <br>
-    <button class="save" onclick="v.saveQuestionV()">Speichern</button>
+    <button id="save_button" class="save">Speichern</button>
 
 </div>
 
@@ -46,13 +51,15 @@
     <h3>Prüfen</h3>
 
 
-
+    <button id="statistic_button" class="statistic_start">Statistik ansehen</button>
 </div>
 
 <div id="statistic" class="tabcontent">
     <h3>Statistik</h3>
 
 </div>
+
+
 
 </body>
 

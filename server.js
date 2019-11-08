@@ -1,13 +1,19 @@
 var http = require('http');
 var fs = require('fs');
 var path = require('path');
+var sqlite3 = require('sqlite3');
+var requirejs = require('requirejs');
 
 http.createServer(function (request, response) {
     console.log('request ', request.url);
 
     var filePath = '.' + request.url;
     if (filePath == './') {
-        filePath = './index.html';
+        filePath = './public/index.html';
+    }
+
+    if (request.url === '/css/styles.css') {
+        filePath = '.public/css/styles.css';
     }
 
     var extname = String(path.extname(filePath)).toLowerCase();

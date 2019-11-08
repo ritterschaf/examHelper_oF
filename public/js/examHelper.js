@@ -1,7 +1,8 @@
-// const sqlite3 = require('sqlite3');
 // require('stream');
 
+
 let p, v, m;
+let q_text, q_ansa, q_ansb, q_ansc, q_ansd, text, math, sheet, q_type;
 
 document.addEventListener('DOMContentLoaded', function () {
     //let db = new sqlite3.Database(':memory:');
@@ -10,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
     v = new examView(p);
     p.setModelAndView(m, v);
     p.setQuestions();
-
+    v.setHandler();
 
 });
 
@@ -39,15 +40,17 @@ class examModel {
             ["C4", "C", "D", "F", "G", "sheet"]
         ];
     }
-    getQuestionsM() {
-        return [...this.frage];
+
+    getQuestions() {
+        //return [...this.frage];
         //returns copy of frage array
         //right now this is the same as updateQuestions,
         // final version here will include database work tho
 
+        //db work here...
     }
 
-    saveQuestionM(data){
+    saveQuestionM(data) {
         this.frage.push(data);
     }
 
@@ -89,54 +92,43 @@ class examView {
 
     setHandler() {
 
+        //Input-Handler
+
+        q_text = document.getElementById('q_text');
+        q_ansa = document.getElementById('q_ansA');
+        q_ansb = document.getElementById('q_ansB');
+        q_ansc = document.getElementById('q_ansC');
+        q_ansd = document.getElementById('q_ansD');
+        text = document.getElementById('text');
+        math = document.getElementById('math');
+        sheet = document.getElementById('sheet');
+
+
+        //Button-Handler
+
+        //registrier hier Buttondruck vom Save-Button und leite weiter an Presenters SaveQuestion.
+        document.getElementById("save_button").addEventListener("click", function () {
+            v.vp.saveQuestion();
+        });
+
+        //registrier Buttondruck von Statistik-Button, sofort umschalten auf Statistik Tab...joa.
+        document.getElementById('statistic_button').addEventListener("click", function () {
+            v.vp.startStatistic();
+        });
+
 
     }
 
-    getQuestionsV() {
-       this.vfrage = this.vp.getQuestionsP();
-       console.log('This is the View and this is my array: ', this.vfrage);
+    clearInputs() {
+
+        q_text.value = q_ansa.value = q_ansb.value = q_ansc.value = q_ansd.value = "";
     }
 
-    saveQuestionV() {
-        let q_text = document.getElementById('q_text').value;
-        let q_ansa = document.getElementById('q_ansA').value;
-        let q_ansb = document.getElementById('q_ansB').value;
-        let q_ansc = document.getElementById('q_ansC').value;
-        let q_ansd = document.getElementById('q_ansD').value;
-        let text = document.getElementById('text');
-        let math = document.getElementById('math');
-        let sheet = document.getElementById('sheet');
-        let q_type;
+    generateQuestions() {
 
-        if (q_text === "" || q_ansa === "" || q_ansb === "" || q_ansc === "" || q_ansd === "") {
-            window.alert('Alles ausfüllen.');
-            return;
-        }
+    }
 
-        if (text.checked) {
-            q_type = text.value;
-        }
-        if (math.checked) {
-            q_type = math.value;
-        }
-        if (sheet.checked) {
-            q_type = sheet.value;
-        }
-
-        //console.log('Selected: ', q_type);
-
-        //this.vfrage.push([q_text, q_ansa, q_ansb, q_ansc, q_ansd, q_type]);
-        //funktioniert
-
-        let newdata = [q_text, q_ansa, q_ansb, q_ansc, q_ansd, q_type];
-        this.vp.saveQuestionP(newdata);
-
-        this.appendQ(newdata);
-
-
-            }
-
-    appendQ(stuff){
+    appendQ(stuff) {
 
         let ex_div = document.createElement('div');
         ex_div.setAttribute('class', 'ex_qu');
@@ -145,10 +137,11 @@ class examView {
         document.getElementById('exam').appendChild(ex_div);
 
     }
-    updateQuestionsV(data){
+
+    updateQuestionsV(data) {
         this.vfrage = data;
         console.log('View was updated: ', this.vfrage);
-            }
+    }
 
 
     renderSheet(note) {
@@ -200,10 +193,6 @@ class examView {
 
     }
 
-    checkQuestion(answer) {
-
-    }
-
 }
 
 // *~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~ PRESENTER *~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~
@@ -220,26 +209,56 @@ class examPresenter {
         // pm = model;
     }
 
-    setQuestions(){
+    setQuestions() {
         //Startfunktion um erstmal alles mit Daten zu füttern
-        this.pv.getQuestionsV();
+        // this.pm.getQuestions();
+
+        // this.pv.vfrage = this.pm.frage;
+
     }
 
     getQuestionsP() {
-        return this.pm.getQuestionsM();
+        //return this.pm.getQuestionsM();
     }
 
-    saveQuestionP(data){
-        this.pm.saveQuestionM(data);
-        this.updateQuestionsP();
+    saveQuestion() {
+
+        if (text.checked) {
+            q_type = text.value;
+        }
+        if (math.checked) {
+            q_type = math.value;
+        }
+        if (sheet.checked) {
+            q_type = sheet.value;
+        }
+
+        let newdata = [q_text.value, q_ansa.value, q_ansb.value, q_ansc.value, q_ansd.value, q_type.value];
+        //take data from inputs
+
+        this.pv.appendQ(newdata);
+        this.pv.clearInputs();
+
+        //this.pm.saveQuestionM(newdata);
+        //this.updateQuestions(newdata);
+
+
     }
 
-    updateQuestionsP(){
-        this.pv.updateQuestionsV(this.pm.updateQuestionsM());
+    updateQuestions(data) {
+        this.pv.vfrage.push(data);
+
     }
 
 
     checkQuestion(answer) {
         this.pm.checkQuestion(answer);
+    }
+
+
+    // ****~~~****~~~****~~~Statistik-Zeug~~~****~~~****~~~****
+
+    startStatistic() {
+        window.alert('Statistik ooooooh');
     }
 }
