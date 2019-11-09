@@ -71,7 +71,7 @@ body textarea {
 }
 
 .ex_qu {
-    height: 55px;
+    /*height: 55px;*/
     margin: 15px;
     border: 1px solid red;
     border-radius: 5px;

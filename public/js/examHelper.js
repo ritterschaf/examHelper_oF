@@ -3,6 +3,7 @@
 
 let p, v, m;
 let q_text, q_ansa, q_ansb, q_ansc, q_ansd, text, math, sheet, q_type;
+let e_text, e_ansa, e_ansb, e_ansc, e_ansd;
 
 document.addEventListener('DOMContentLoaded', function () {
     //let db = new sqlite3.Database(':memory:');
@@ -113,7 +114,12 @@ class examView {
 
         //registrier Buttondruck von Statistik-Button, sofort umschalten auf Statistik Tab...joa.
         document.getElementById('statistic_button').addEventListener("click", function () {
-            v.vp.startStatistic();
+            //v.vp.startStatistic();
+            v.appendQ('');
+        });
+
+        document.getElementById('fillquestion').addEventListener("click", function() {
+           v.appendQ('');
         });
 
 
@@ -128,14 +134,65 @@ class examView {
 
     }
 
-    appendQ(stuff) {
+    appendQ() {
 
-        let ex_div = document.createElement('div');
-        ex_div.setAttribute('class', 'ex_qu');
-        let textnode = document.createTextNode(stuff[0]);
-        ex_div.appendChild(textnode);
-        document.getElementById('exam').appendChild(ex_div);
+        //window.alert('Bla');
+        let container = document.getElementById('exam_box');
 
+
+
+        // this.vfrage.forEach(function (qu) {
+        //    var vtext = document.createElement('textarea');
+        //    vtext.setAttribute('class', 'ex_qu');
+        //    vtext.textContent = qu[0];
+        //    container.appendChild(vtext);
+        // });
+
+        for (let i = 0; i < this.vfrage.length; i++){
+
+            let e_div = document.createElement('div');
+            e_div.setAttribute('class', 'ex_qu');
+            e_text = document.createElement('textarea');
+            e_text.setAttribute('class', 'e_text');
+            e_ansa = document.createElement('button');
+            e_ansa.setAttribute('class', 'e_ansa');
+            e_ansb = document.createElement('button');
+            e_ansb.setAttribute('class', 'e_ansb');
+            e_ansc = document.createElement('button');
+            e_ansc.setAttribute('class', 'e_ansc');
+            e_ansd = document.createElement('button');
+            e_ansd.setAttribute('class', 'e_ansd');
+
+            //elements must be newly created every single time!
+            //otherwise only one will be created and added.
+
+            e_text.value = this.vfrage[i][0];
+            e_ansa.textContent = this.vfrage[i][1];
+            e_ansb.textContent = this.vfrage[i][2];
+            e_ansc.textContent = this.vfrage[i][3];
+            e_ansd.textContent = this.vfrage[i][4];
+
+            e_div.appendChild(e_text);
+            e_div.appendChild(e_ansa);
+            e_div.appendChild(e_ansb);
+            e_div.appendChild(e_ansc);
+            e_div.appendChild(e_ansd);
+
+            container.appendChild(e_div);
+
+            // e_div.innerHTML+=e_text.outerHTML + e_ansa.outerHTML + e_ansb.outerHTML;
+            // container.appendChild(e_div);
+        }
+
+        // let ex_div = document.createElement('div');
+        // ex_div.setAttribute('class', 'ex_qu');
+        // let textnode = document.createTextNode(stuff[0]);
+        // ex_div.appendChild(textnode);
+        // document.getElementById('exam').appendChild(ex_div);
+
+        //wenn hier render noten kommt
+        // dannwird hier einfach statt ner e_text box einfach eine div mit ner id eingefügt
+        // das wird dann mit an renderSheet gegeben, sodass der damit gleich die entsprechende div ansprechen kann
     }
 
     updateQuestionsV(data) {
@@ -213,7 +270,7 @@ class examPresenter {
         //Startfunktion um erstmal alles mit Daten zu füttern
         // this.pm.getQuestions();
 
-        // this.pv.vfrage = this.pm.frage;
+        this.pv.vfrage = this.pm.frage;
 
     }
 
@@ -248,6 +305,53 @@ class examPresenter {
     updateQuestions(data) {
         this.pv.vfrage.push(data);
 
+    }
+
+    appendQ(stuff) {
+
+        let container = document.getElementById('exam_box');
+        let e_div = document.createElement('div');
+        e_div.setAttribute('class', 'ex_qu');
+        e_text = document.createElement('textarea');
+        e_text.setAttribute('class', 'e_text');
+        e_ansa = document.createElement('button');
+        e_ansa.setAttribute('class', 'e_ansa');
+        e_ansb = document.createElement('button');
+        e_ansb.setAttribute('class', 'e_ansb');
+        e_ansc = document.createElement('button');
+        e_ansc.setAttribute('class', 'e_ansc');
+        e_ansd = document.createElement('button');
+        e_ansd.setAttribute('class', 'e_ansd');
+
+
+
+        // for (let i = 0; i < this.pv.vfrage.length; i++){
+        //     e_text.value = this.pv.vfrage[i][0];
+        //     e_ansa.value = this.pv.vfrage[i][1];
+        //     e_ansb.value = this.pv.vfrage[i][2];
+        //     e_ansc.value = this.pv.vfrage[i][3];
+        //     e_ansd.value = this.pv.vfrage[i][4];
+        //
+        //     e_div.appendChild(e_text);
+        //     e_div.appendChild(e_ansa);
+        //     e_div.appendChild(e_ansb);
+        //     e_div.appendChild(e_ansc);
+        //     e_div.appendChild(e_ansd);
+        //
+        //     container.appendChild(e_div);
+        //
+        //
+        // }
+
+        // let ex_div = document.createElement('div');
+        // ex_div.setAttribute('class', 'ex_qu');
+        // let textnode = document.createTextNode(stuff[0]);
+        // ex_div.appendChild(textnode);
+        // document.getElementById('exam').appendChild(ex_div);
+
+        //wenn hier render noten kommt
+        // dannwird hier einfach statt ner e_text box einfach eine div mit ner id eingefügt
+        // das wird dann mit an renderSheet gegeben, sodass der damit gleich die entsprechende div ansprechen kann
     }
 
 
