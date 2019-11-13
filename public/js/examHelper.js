@@ -3,16 +3,18 @@
 
 let p, v, m;
 let q_text, q_ansa, q_ansb, q_ansc, q_ansd, text, math, sheet, q_type;
-let e_text, e_ansa, e_ansb, e_ansc, e_ansd;
-
+let e_text, e_ansa, e_ansb, e_ansc, e_ansd, check_q, container;
+let current = 0;
 document.addEventListener('DOMContentLoaded', function () {
     //let db = new sqlite3.Database(':memory:');
+    container = document.getElementById('exam_box');
     m = new examModel();
     p = new examPresenter();
     v = new examView(p);
     p.setModelAndView(m, v);
     p.setQuestions();
     v.setHandler();
+
 
 });
 
@@ -36,9 +38,10 @@ class examModel {
         // ^ this is javascript object. Can't be copied! Or at least not without major hassle
 
         this.frage = [
-            ["Bird?", "Vogel", "Wurm", "Baum", "Bürde", "text"],
-            ["x^2+x^2", "2x^2", "x^4", "x^8", "2x^4", "math"],
-            ["C4", "C", "D", "F", "G", "sheet"]
+            [1, "D/4", "D", "E", "F", "F#", "sheet"],
+            [2, "Bird?", "Vogel", "Wurm", "Baum", "Bürde", "text"],
+            [3, "x^2+x^2", "2x^2", "x^4", "x^8", "2x^4", "math"],
+            [4, "C/4", "C", "D", "F", "G", "sheet"]
         ];
     }
 
@@ -72,6 +75,44 @@ class examView {
         this.vfrage = [];
     }
 
+    setHandler() {
+
+        //Input-Handler
+        q_text = document.getElementById('q_text');
+        q_ansa = document.getElementById('q_ansA');
+        q_ansb = document.getElementById('q_ansB');
+        q_ansc = document.getElementById('q_ansC');
+        q_ansd = document.getElementById('q_ansD');
+        text = document.getElementById('text');
+        math = document.getElementById('math');
+        sheet = document.getElementById('sheet');
+
+
+        //Button-Handler
+
+        //Save-Button und leite weiter an Presenters SaveQuestion.
+        document.getElementById("save_button").addEventListener("click", function () {
+            v.vp.saveQuestion();
+        });
+
+        //Statistik-Button, sofort umschalten auf Statistik Tab...joa.
+        document.getElementById('statistic_button').addEventListener("click", function () {
+            //v.vp.startStatistic();
+            v.appendQ('');
+        });
+
+        document.getElementById('fillquestion').addEventListener("click", function () {
+            v.renderQuestion();
+        });
+
+        //Next-Button
+        document.getElementById('next').addEventListener('click', function () {
+            v.nextQuestion();
+        });
+
+
+    }
+
     openTab(evt, id) {
         var i, tabcontent, tablinks;
 
@@ -87,90 +128,65 @@ class examView {
 
         document.getElementById(id).style.display = "block";
         evt.currentTarget.className += " active";
-
-
     }
 
-    setHandler() {
 
-        //Input-Handler
+    clear(type) {
+        if (type === 'inputs') {
+            q_text.value = q_ansa.value = q_ansb.value = q_ansc.value = q_ansd.value = "";
+        }
 
-        q_text = document.getElementById('q_text');
-        q_ansa = document.getElementById('q_ansA');
-        q_ansb = document.getElementById('q_ansB');
-        q_ansc = document.getElementById('q_ansC');
-        q_ansd = document.getElementById('q_ansD');
-        text = document.getElementById('text');
-        math = document.getElementById('math');
-        sheet = document.getElementById('sheet');
+        if (type === 'container') {
+            container.innerHTML = "";
+        }
+    }
 
 
-        //Button-Handler
+    renderQuestion() {
 
-        //registrier hier Buttondruck vom Save-Button und leite weiter an Presenters SaveQuestion.
-        document.getElementById("save_button").addEventListener("click", function () {
-            v.vp.saveQuestion();
+        let e_div = document.createElement('div');
+        e_div.setAttribute('class', 'ex_qu');
+        e_text = document.createElement('div');
+        e_ansa = document.createElement('button');
+        e_ansa.setAttribute('class', 'e_ansa e_btn');
+        e_ansb = document.createElement('button');
+        e_ansb.setAttribute('class', 'e_ansb e_btn');
+        e_ansc = document.createElement('button');
+        e_ansc.setAttribute('class', 'e_ansc e_btn');
+        e_ansd = document.createElement('button');
+        e_ansd.setAttribute('class', 'e_ansd e_btn');
+
+        //elements must be newly created every single time!
+        //otherwise only one will be created and added.
+
+        e_ansa.textContent = this.vfrage[current][2];
+        e_ansb.textContent = this.vfrage[current][3];
+        e_ansc.textContent = this.vfrage[current][4];
+        e_ansd.textContent = this.vfrage[current][5];
+
+        e_ansa.addEventListener('click', function () {
+            check_q = e_ansa.textContent;
+            console.log(check_q);
+        });
+        e_ansb.addEventListener('click', function () {
+            check_q = e_ansb.textContent;
+            console.log(check_q);
+        });
+        e_ansc.addEventListener('click', function () {
+            check_q = e_ansc.textContent;
+            console.log(check_q);
+        });
+        e_ansd.addEventListener('click', function () {
+            check_q = e_ansd.textContent;
+            console.log(check_q);
         });
 
-        //registrier Buttondruck von Statistik-Button, sofort umschalten auf Statistik Tab...joa.
-        document.getElementById('statistic_button').addEventListener("click", function () {
-            //v.vp.startStatistic();
-            v.appendQ('');
-        });
+        if (this.vfrage[current][6] === 'text' || this.vfrage[current][6] === 'math') {
 
-        document.getElementById('fillquestion').addEventListener("click", function() {
-           v.appendQ('');
-        });
-
-
-    }
-
-    clearInputs() {
-
-        q_text.value = q_ansa.value = q_ansb.value = q_ansc.value = q_ansd.value = "";
-    }
-
-    generateQuestions() {
-
-    }
-
-    appendQ() {
-
-        //window.alert('Bla');
-        let container = document.getElementById('exam_box');
-
-
-
-        // this.vfrage.forEach(function (qu) {
-        //    var vtext = document.createElement('textarea');
-        //    vtext.setAttribute('class', 'ex_qu');
-        //    vtext.textContent = qu[0];
-        //    container.appendChild(vtext);
-        // });
-
-        for (let i = 0; i < this.vfrage.length; i++){
-
-            let e_div = document.createElement('div');
-            e_div.setAttribute('class', 'ex_qu');
-            e_text = document.createElement('textarea');
             e_text.setAttribute('class', 'e_text');
-            e_ansa = document.createElement('button');
-            e_ansa.setAttribute('class', 'e_ansa');
-            e_ansb = document.createElement('button');
-            e_ansb.setAttribute('class', 'e_ansb');
-            e_ansc = document.createElement('button');
-            e_ansc.setAttribute('class', 'e_ansc');
-            e_ansd = document.createElement('button');
-            e_ansd.setAttribute('class', 'e_ansd');
 
-            //elements must be newly created every single time!
-            //otherwise only one will be created and added.
+            e_text.textContent = e_text.value = this.vfrage[current][1];
 
-            e_text.value = this.vfrage[i][0];
-            e_ansa.textContent = this.vfrage[i][1];
-            e_ansb.textContent = this.vfrage[i][2];
-            e_ansc.textContent = this.vfrage[i][3];
-            e_ansd.textContent = this.vfrage[i][4];
 
             e_div.appendChild(e_text);
             e_div.appendChild(e_ansa);
@@ -180,33 +196,42 @@ class examView {
 
             container.appendChild(e_div);
 
-            // e_div.innerHTML+=e_text.outerHTML + e_ansa.outerHTML + e_ansb.outerHTML;
-            // container.appendChild(e_div);
         }
 
-        // let ex_div = document.createElement('div');
-        // ex_div.setAttribute('class', 'ex_qu');
-        // let textnode = document.createTextNode(stuff[0]);
-        // ex_div.appendChild(textnode);
-        // document.getElementById('exam').appendChild(ex_div);
+        if (this.vfrage[current][6] === 'sheet') {
+            //let canvas_name = "sheet_" + this.vfrage.length.toString();
 
-        //wenn hier render noten kommt
-        // dannwird hier einfach statt ner e_text box einfach eine div mit ner id eingefügt
-        // das wird dann mit an renderSheet gegeben, sodass der damit gleich die entsprechende div ansprechen kann
+            e_text.value = this.vfrage[current][1];
+            //e_text.setAttribute('id', canvas_name);
+            e_text.setAttribute('id', 'sheet_canvas');
+
+            e_div.appendChild(e_text);
+            e_div.appendChild(e_ansa);
+            e_div.appendChild(e_ansb);
+            e_div.appendChild(e_ansc);
+            e_div.appendChild(e_ansd);
+
+            container.appendChild(e_div);
+
+
+            this.renderSheet(this.vfrage[current][1]);
+
+        }
+
+
+        console.log('current is: ', current);
+        console.log('length is: ', this.vfrage.length);
+        if (current === this.vfrage.length - 1) {
+            document.getElementById('next').style.display = "none";
+        }
     }
-
-    updateQuestionsV(data) {
-        this.vfrage = data;
-        console.log('View was updated: ', this.vfrage);
-    }
-
 
     renderSheet(note) {
         const VF = Vex.Flow;
 
         // Create an SVG renderer and attach it to the DIV element named "boo".
-        // const div = document.getElementById(name);
-        const div = document.getElementById('boo');
+        //const div = document.getElementById(canvas);
+        const div = document.getElementById('sheet_canvas');
         console.log(div);
         const renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
 
@@ -250,6 +275,23 @@ class examView {
 
     }
 
+    nextQuestion() {
+        current = current + 1;
+
+        let tobechecked;
+
+        for (let i = 0; i < this.vfrage.length; i++) {
+            if (this.vfrage[i][1] === e_text.value) {
+                tobechecked = this.vfrage[i];
+            }
+        }
+        this.vp.checkQuestion(tobechecked, check_q);
+        this.clear('container');
+        this.renderQuestion();
+
+        check_q = "";
+        //reset check_q
+    }
 }
 
 // *~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~ PRESENTER *~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~
@@ -290,14 +332,14 @@ class examPresenter {
             q_type = sheet.value;
         }
 
-        let newdata = [q_text.value, q_ansa.value, q_ansb.value, q_ansc.value, q_ansd.value, q_type.value];
+        let newdata = [(this.pv.vfrage.length + 1), q_text.value, q_ansa.value, q_ansb.value, q_ansc.value, q_ansd.value, q_type.value];
         //take data from inputs
 
-        this.pv.appendQ(newdata);
-        this.pv.clearInputs();
+        //this.pv.renderQuestion(newdata);
+        this.pv.clear('inputs');
 
         //this.pm.saveQuestionM(newdata);
-        //this.updateQuestions(newdata);
+        this.updateQuestions(newdata);
 
 
     }
@@ -305,9 +347,39 @@ class examPresenter {
     updateQuestions(data) {
         this.pv.vfrage.push(data);
 
+        // let container = document.getElementById('exam_box');
+        // let e_div = document.createElement('div');
+        // e_div.setAttribute('class', 'ex_qu');
+        // e_text = document.createElement('textarea');
+        // e_text.setAttribute('class', 'e_text');
+        // e_ansa = document.createElement('button');
+        // e_ansa.setAttribute('class', 'e_ansa');
+        // e_ansb = document.createElement('button');
+        // e_ansb.setAttribute('class', 'e_ansb');
+        // e_ansc = document.createElement('button');
+        // e_ansc.setAttribute('class', 'e_ansc');
+        // e_ansd = document.createElement('button');
+        // e_ansd.setAttribute('class', 'e_ansd');
+        //
+        //
+        // e_text.value = data[1];
+        // e_ansa.textContent = data[2];
+        // e_ansb.textContent = data[3];
+        // e_ansc.textContent = data[4];
+        // e_ansd.textContent = data[5];
+        //
+        // e_div.appendChild(e_text);
+        // e_div.appendChild(e_ansa);
+        // e_div.appendChild(e_ansb);
+        // e_div.appendChild(e_ansc);
+        // e_div.appendChild(e_ansd);
+        //
+        // container.appendChild(e_div);
+
+        console.log('new array: ', this.pv.vfrage);
     }
 
-    appendQ(stuff) {
+    /*renderQuestion(stuff) {
 
         let container = document.getElementById('exam_box');
         let e_div = document.createElement('div');
@@ -322,7 +394,6 @@ class examPresenter {
         e_ansc.setAttribute('class', 'e_ansc');
         e_ansd = document.createElement('button');
         e_ansd.setAttribute('class', 'e_ansd');
-
 
 
         // for (let i = 0; i < this.pv.vfrage.length; i++){
@@ -352,11 +423,17 @@ class examPresenter {
         //wenn hier render noten kommt
         // dannwird hier einfach statt ner e_text box einfach eine div mit ner id eingefügt
         // das wird dann mit an renderSheet gegeben, sodass der damit gleich die entsprechende div ansprechen kann
-    }
+    }*/
 
 
-    checkQuestion(answer) {
-        this.pm.checkQuestion(answer);
+    checkQuestion(array, answer) {
+        //this.pm.checkQuestion(answer);
+        if (answer === array[2]) {
+            window.alert('Whee! Correct!');
+        } else {
+            window.alert('Wrong...sorry.');
+        }
+
     }
 
 

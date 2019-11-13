@@ -1,6 +1,8 @@
 {
+  "lang": "de-DE",
   "short_name": "Exam Helper",
   "name": "Exam Helper",
+  "description": "Demo-Lernprogramm ohne Frameworks",
   "icons": [{
     "src": "/images/icons/icon-128x128.png",
     "sizes": "128x128",
@@ -32,3 +34,5 @@
   "background_color": "#3367D6",
   "theme_color": "#3367D6"
 }
+
+

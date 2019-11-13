@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="css/styles.css">
     <title>ExamHelper</title>
     <!--<script src="js/examHelper.js"></script>-->
-
+    <script type="text/javascript" src="https://unpkg.com/vexflow/releases/vexflow-min.js"></script>
     <script type="text/javascript" src="require-master/require.js"></script>
     <script src="js/examHelper.js"></script>
     <script src="service-worker.js"></script>
@@ -43,16 +43,17 @@
     <label for="sheet">Notenfrage</label>
     <input type="radio" value="sheet" id="sheet" name="q_type">
     <br>
-    <button id="save_button" class="save">Speichern</button>
+    <button id="save_button" class="btn">Speichern</button>
 
-    <button id="fillquestion" class="save">Füllen</button>
+    <button id="fillquestion" class="btn">Füllen</button>
 </div>
 
 <div id="exam" class="tabcontent">
     <h3>Prüfen</h3>
     <div id="exam_box"></div>
 
-    <button id="statistic_button" class="statistic_start">Statistik ansehen</button>
+    <button class="btn" id="next" value="OIIIII">Weiter</button>
+    <button id="statistic_button" class="btn statistic_start">Statistik ansehen</button>
 </div>
 
 <div id="statistic" class="tabcontent">
