@@ -1,8 +1,9 @@
 // require('stream');
 
 
+
 let p, v, m;
-let q_text, q_ansa, q_ansb, q_ansc, q_ansd, text, math, sheet, q_type;
+let q_text, q_ansa, q_ansb, q_ansc, q_ansd, q_radio, q_type;
 let e_text, e_ansa, e_ansb, e_ansc, e_ansd, check_q, container;
 let current = 0;
 document.addEventListener('DOMContentLoaded', function () {
@@ -38,6 +39,7 @@ class examModel {
         // ^ this is javascript object. Can't be copied! Or at least not without major hassle
 
         this.frage = [
+            [0, "2x+x", "3x", "2x+x", "2x^2", "x", "math"],
             [1, "D/4", "D", "E", "F", "F#", "sheet"],
             [2, "Bird?", "Vogel", "Wurm", "Baum", "Bürde", "text"],
             [3, "x^2+x^2", "2x^2", "x^4", "x^8", "2x^4", "math"],
@@ -83,9 +85,7 @@ class examView {
         q_ansb = document.getElementById('q_ansB');
         q_ansc = document.getElementById('q_ansC');
         q_ansd = document.getElementById('q_ansD');
-        text = document.getElementById('text');
-        math = document.getElementById('math');
-        sheet = document.getElementById('sheet');
+        q_radio = document.getElementsByName('q_type');
 
 
         //Button-Handler
@@ -101,14 +101,20 @@ class examView {
             v.appendQ('');
         });
 
-        document.getElementById('fillquestion').addEventListener("click", function () {
-            v.renderQuestion();
-        });
-
         //Next-Button
-        document.getElementById('next').addEventListener('click', function () {
+        document.getElementById('next_button').addEventListener('click', function () {
             v.nextQuestion();
         });
+
+        document.getElementById('start_button').addEventListener('click', function(){
+           v.renderQuestion();
+        });
+
+        // document.getElementById('again_button').addEventListener('click', function(){
+        //     current = 0;
+        //     v.clear('container');
+        //     v.renderQuestion();
+        // });
 
 
     }
@@ -139,6 +145,13 @@ class examView {
         if (type === 'container') {
             container.innerHTML = "";
         }
+    }
+
+
+    update(data){
+
+        this.vfrage.push(data);
+        console.log('new array in view:', this.vfrage);
     }
 
 
@@ -181,7 +194,7 @@ class examView {
             console.log(check_q);
         });
 
-        if (this.vfrage[current][6] === 'text' || this.vfrage[current][6] === 'math') {
+        if (this.vfrage[current][6] === 'text') {
 
             e_text.setAttribute('class', 'e_text');
 
@@ -195,6 +208,21 @@ class examView {
             e_div.appendChild(e_ansd);
 
             container.appendChild(e_div);
+
+        }
+
+        if (this.vfrage[current][6] === 'math') {
+            e_text.setAttribute('class', 'e_sheet');
+
+            e_div.appendChild(e_text);
+            e_div.appendChild(e_ansa);
+            e_div.appendChild(e_ansb);
+            e_div.appendChild(e_ansc);
+            e_div.appendChild(e_ansd);
+
+            container.appendChild(e_div);
+
+            this.renderMath(this.vfrage[current][1], e_text);
 
         }
 
@@ -221,8 +249,11 @@ class examView {
 
         console.log('current is: ', current);
         console.log('length is: ', this.vfrage.length);
-        if (current === this.vfrage.length - 1) {
-            document.getElementById('next').style.display = "none";
+        if (current === this.vfrage.length-1) {
+            document.getElementById('next_button').style.display = "none";
+            //document.getElementById('again_button').style.display= "block";
+        } else {
+            //document.getElementById('again_button').style.display= "none";
         }
     }
 
@@ -271,8 +302,10 @@ class examView {
 
     }
 
-    renderMath() {
-
+    renderMath(formula, element) {
+        katex.render(formula, element, {
+           throwOnError: false
+        });
     }
 
     nextQuestion() {
@@ -322,20 +355,17 @@ class examPresenter {
 
     saveQuestion() {
 
-        if (text.checked) {
-            q_type = text.value;
-        }
-        if (math.checked) {
-            q_type = math.value;
-        }
-        if (sheet.checked) {
-            q_type = sheet.value;
+        for (let i = 0; i < q_radio.length; i++){
+            if(q_radio[i].checked){
+                q_type = q_radio[i].value;
+                console.log('Checkvalue: ',q_type );
+            }
         }
 
-        let newdata = [(this.pv.vfrage.length + 1), q_text.value, q_ansa.value, q_ansb.value, q_ansc.value, q_ansd.value, q_type.value];
+
+        let newdata = [(this.pv.vfrage.length + 1), q_text.value, q_ansa.value, q_ansb.value, q_ansc.value, q_ansd.value, q_type];
         //take data from inputs
 
-        //this.pv.renderQuestion(newdata);
         this.pv.clear('inputs');
 
         //this.pm.saveQuestionM(newdata);
@@ -345,8 +375,9 @@ class examPresenter {
     }
 
     updateQuestions(data) {
-        this.pv.vfrage.push(data);
+        //this.pv.vfrage.push(data);
 
+        this.pv.update(data);
         // let container = document.getElementById('exam_box');
         // let e_div = document.createElement('div');
         // e_div.setAttribute('class', 'ex_qu');
@@ -379,59 +410,19 @@ class examPresenter {
         console.log('new array: ', this.pv.vfrage);
     }
 
-    /*renderQuestion(stuff) {
-
-        let container = document.getElementById('exam_box');
-        let e_div = document.createElement('div');
-        e_div.setAttribute('class', 'ex_qu');
-        e_text = document.createElement('textarea');
-        e_text.setAttribute('class', 'e_text');
-        e_ansa = document.createElement('button');
-        e_ansa.setAttribute('class', 'e_ansa');
-        e_ansb = document.createElement('button');
-        e_ansb.setAttribute('class', 'e_ansb');
-        e_ansc = document.createElement('button');
-        e_ansc.setAttribute('class', 'e_ansc');
-        e_ansd = document.createElement('button');
-        e_ansd.setAttribute('class', 'e_ansd');
-
-
-        // for (let i = 0; i < this.pv.vfrage.length; i++){
-        //     e_text.value = this.pv.vfrage[i][0];
-        //     e_ansa.value = this.pv.vfrage[i][1];
-        //     e_ansb.value = this.pv.vfrage[i][2];
-        //     e_ansc.value = this.pv.vfrage[i][3];
-        //     e_ansd.value = this.pv.vfrage[i][4];
-        //
-        //     e_div.appendChild(e_text);
-        //     e_div.appendChild(e_ansa);
-        //     e_div.appendChild(e_ansb);
-        //     e_div.appendChild(e_ansc);
-        //     e_div.appendChild(e_ansd);
-        //
-        //     container.appendChild(e_div);
-        //
-        //
-        // }
-
-        // let ex_div = document.createElement('div');
-        // ex_div.setAttribute('class', 'ex_qu');
-        // let textnode = document.createTextNode(stuff[0]);
-        // ex_div.appendChild(textnode);
-        // document.getElementById('exam').appendChild(ex_div);
-
-        //wenn hier render noten kommt
-        // dannwird hier einfach statt ner e_text box einfach eine div mit ner id eingefügt
-        // das wird dann mit an renderSheet gegeben, sodass der damit gleich die entsprechende div ansprechen kann
-    }*/
-
 
     checkQuestion(array, answer) {
         //this.pm.checkQuestion(answer);
+
+        if (array) {
         if (answer === array[2]) {
             window.alert('Whee! Correct!');
         } else {
             window.alert('Wrong...sorry.');
+        }
+
+        } else {
+            window.alert('Please answer.');
         }
 
     }
