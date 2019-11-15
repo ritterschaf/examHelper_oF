@@ -29,8 +29,8 @@
 <h1>ExamHelper</h1>
 <div class="tab">
     <button class="tablinks" onclick="v.openTab(event, 'question')">Frage eingeben</button>
-    <button class="tablinks" onclick="v.openTab(event, 'exam')">Prüfen</button>
-    <button class="tablinks" onclick="v.openTab(event, 'statistic')">Statistik</button>
+    <button class="tablinks" id="ex_tab" onclick="v.openTab(event, 'exam')">Prüfen</button>
+    <button class="tablinks" id="stat_tab" onclick="v.openTab(event, 'statistic')">Statistik</button>
 </div>
 
 <div id="question" class="tabcontent active">
@@ -58,12 +58,14 @@
     <div id="exam_box"></div>
 
     <button class="btn" id="next_button">Weiter</button>
-    <button class="btn" id="again_button">Nochmal?</button>
     <button id="statistic_button" class="btn statistic_start">Statistik ansehen</button>
 </div>
 
 <div id="statistic" class="tabcontent">
     <h3>Statistik</h3>
+
+    <div id="statistic_box"></div>
+    <button class="btn" id="again_button">Nochmal?</button>
 
 </div>
 

@@ -5,7 +5,9 @@
 let p, v, m;
 let q_text, q_ansa, q_ansb, q_ansc, q_ansd, q_radio, q_type;
 let e_text, e_ansa, e_ansb, e_ansc, e_ansd, check_q, container;
-let current = 0;
+let rights, wrongs;
+let current = rights = wrongs = 0;
+
 document.addEventListener('DOMContentLoaded', function () {
     //let db = new sqlite3.Database(':memory:');
     container = document.getElementById('exam_box');
@@ -39,14 +41,17 @@ class examModel {
         // ^ this is javascript object. Can't be copied! Or at least not without major hassle
 
         this.frage = [
-            [0, "2x+x", "3x", "2x+x", "2x^2", "x", "math"],
-            [1, "D/4", "D", "E", "F", "F#", "sheet"],
-            [2, "Bird?", "Vogel", "Wurm", "Baum", "Bürde", "text"],
-            [3, "x^2+x^2", "2x^2", "x^4", "x^8", "2x^4", "math"],
-            [4, "C/4", "C", "D", "F", "G", "sheet"]
+            ["2x+x", "3x", "2x+x", "2x^2", "x", "math", 2],
+            ["D/4", "D", "E", "F", "F#", "sheet", 4],
+            ["Bird?", "Vogel", "Wurm", "Baum", "Bürde", "text", 0],
+            ["x^2+x^2", "2x^2", "x^4", "x^8", "2x^4", "math", 1],
+            ["C/4", "C", "D", "F", "G", "sheet", 0]
         ];
     }
 
+    // ["2x+x",      "3x",            "2x+x", "2x^2", "x",      "math",        2],
+
+    //  ^ question    ^ solution            ^ answers b-d         ^ type       ^ amount of correctly answered
     getQuestions() {
         //return [...this.frage];
         //returns copy of frage array
@@ -98,7 +103,7 @@ class examView {
         //Statistik-Button, sofort umschalten auf Statistik Tab...joa.
         document.getElementById('statistic_button').addEventListener("click", function () {
             //v.vp.startStatistic();
-            v.appendQ('');
+            v.showStatistic();
         });
 
         //Next-Button
@@ -108,13 +113,18 @@ class examView {
 
         document.getElementById('start_button').addEventListener('click', function(){
            v.renderQuestion();
+            document.getElementById('next_button').style.display="block";
+            document.getElementById('start_button').style.display="none";
         });
 
-        // document.getElementById('again_button').addEventListener('click', function(){
-        //     current = 0;
-        //     v.clear('container');
-        //     v.renderQuestion();
-        // });
+        document.getElementById('again_button').addEventListener('click', function(){
+            current = rights = wrongs = 0;
+            v.clear('container');
+            v.renderQuestion();
+            document.getElementById('ex_tab').click();
+        });
+
+        document.getElementById('next_button').style.display="none";
 
 
     }
@@ -172,10 +182,10 @@ class examView {
         //elements must be newly created every single time!
         //otherwise only one will be created and added.
 
-        e_ansa.textContent = this.vfrage[current][2];
-        e_ansb.textContent = this.vfrage[current][3];
-        e_ansc.textContent = this.vfrage[current][4];
-        e_ansd.textContent = this.vfrage[current][5];
+        e_ansa.textContent = this.vfrage[current][1];
+        e_ansb.textContent = this.vfrage[current][2];
+        e_ansc.textContent = this.vfrage[current][3];
+        e_ansd.textContent = this.vfrage[current][4];
 
         e_ansa.addEventListener('click', function () {
             check_q = e_ansa.textContent;
@@ -194,11 +204,11 @@ class examView {
             console.log(check_q);
         });
 
-        if (this.vfrage[current][6] === 'text') {
+        if (this.vfrage[current][5] === 'text') {
 
             e_text.setAttribute('class', 'e_text');
 
-            e_text.textContent = e_text.value = this.vfrage[current][1];
+            e_text.textContent = e_text.value = this.vfrage[current][0];
 
 
             e_div.appendChild(e_text);
@@ -211,8 +221,9 @@ class examView {
 
         }
 
-        if (this.vfrage[current][6] === 'math') {
-            e_text.setAttribute('class', 'e_sheet');
+        if (this.vfrage[current][5] === 'math') {
+            e_text.setAttribute('class', 'e_math');
+            e_text.value = this.vfrage[current][0];
 
             e_div.appendChild(e_text);
             e_div.appendChild(e_ansa);
@@ -222,15 +233,13 @@ class examView {
 
             container.appendChild(e_div);
 
-            this.renderMath(this.vfrage[current][1], e_text);
+            this.renderMath(this.vfrage[current][0], e_text);
 
         }
 
-        if (this.vfrage[current][6] === 'sheet') {
-            //let canvas_name = "sheet_" + this.vfrage.length.toString();
+        if (this.vfrage[current][5] === 'sheet') {
 
-            e_text.value = this.vfrage[current][1];
-            //e_text.setAttribute('id', canvas_name);
+            e_text.value = this.vfrage[current][0];
             e_text.setAttribute('id', 'sheet_canvas');
 
             e_div.appendChild(e_text);
@@ -242,18 +251,15 @@ class examView {
             container.appendChild(e_div);
 
 
-            this.renderSheet(this.vfrage[current][1]);
+            this.renderSheet(this.vfrage[current][0]);
 
         }
 
 
         console.log('current is: ', current);
         console.log('length is: ', this.vfrage.length);
-        if (current === this.vfrage.length-1) {
+        if (current === this.vfrage.length) {
             document.getElementById('next_button').style.display = "none";
-            //document.getElementById('again_button').style.display= "block";
-        } else {
-            //document.getElementById('again_button').style.display= "none";
         }
     }
 
@@ -314,7 +320,7 @@ class examView {
         let tobechecked;
 
         for (let i = 0; i < this.vfrage.length; i++) {
-            if (this.vfrage[i][1] === e_text.value) {
+            if (this.vfrage[i][0] === e_text.value) {
                 tobechecked = this.vfrage[i];
             }
         }
@@ -324,6 +330,20 @@ class examView {
 
         check_q = "";
         //reset check_q
+    }
+
+
+    showStatistic(){
+
+        console.log('Right questions: ', rights);
+        console.log('Wrong questions: ', wrongs);
+
+        let s_b = document.createElement('div');
+        s_b.setAttribute('class', 'statistic_value');
+        s_b.innerHTML = `Du hast ${rights} von ${rights+wrongs} Fragen richtig beantwortet.`;
+        document.getElementById('statistic_box').appendChild(s_b);
+
+        document.getElementById('stat_tab').click();
     }
 }
 
@@ -414,11 +434,16 @@ class examPresenter {
     checkQuestion(array, answer) {
         //this.pm.checkQuestion(answer);
 
+        console.log('array to check: ', array);
+        console.log('answer to check: ', answer);
+
         if (array) {
-        if (answer === array[2]) {
+        if (answer === array[1]) {
             window.alert('Whee! Correct!');
+            rights = rights + 1;
         } else {
             window.alert('Wrong...sorry.');
+            wrongs = wrongs + 1;
         }
 
         } else {

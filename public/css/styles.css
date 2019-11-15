@@ -95,9 +95,12 @@ body textarea {
     padding: 10px;
 }
 
-.e_text {
+.e_text, .e_math {
     width: 80%;
-    height: 50px;
+    height: 80px;
+    text-align: center;
+    margin: auto;
+    padding: 10px;
 }
 
 
