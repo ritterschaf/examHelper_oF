@@ -127,6 +127,8 @@ class examView {
         document.getElementById('next_button').style.display="none";
 
 
+
+
     }
 
     openTab(evt, id) {

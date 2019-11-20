@@ -103,6 +103,16 @@ body textarea {
     padding: 10px;
 }
 
+#bottom {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+#push_button{
+    background: #cccccc;
+    color: black;
+}
 
 
 
