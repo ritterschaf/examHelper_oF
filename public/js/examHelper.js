@@ -1,11 +1,10 @@
 // require('stream');
 
 
-
 let p, v, m;
 let q_text, q_ansa, q_ansb, q_ansc, q_ansd, q_radio, q_type;
 let e_text, e_ansa, e_ansb, e_ansc, e_ansd, check_q, container;
-let rights, wrongs;
+let rights, wrongs, requestURL;
 let current = rights = wrongs = 0;
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -26,39 +25,54 @@ document.addEventListener('DOMContentLoaded', function () {
 
 class examModel {
     constructor() {
-        // this.frage = {
-        //     text: [
-        //         {"q": "Was bedeutet bird?", "l": ["Vogel", "Wurm", "Baum", "Bürde"]}
-        //     ],
-        //     math: [
-        //         {"q": "x^2+x^2", "l": ["2x^2", "x^4", "x^8", "2x^4"]}
-        //     ],
-        //     sheet: [
-        //         {"q": "C4", "l": ["C", "D", "F", "G"]}
-        //     ]
-        // };
+        // this.frage = [
+        //     ["2x+x", "3x", "2x+x", "2x^2", "x", "math", 2],
+        //     ["D/4", "D", "E", "F", "F#", "sheet", 4],
+        //     ["Bird?", "Vogel", "Wurm", "Baum", "Bürde", "text", 0],
+        //     ["x^2+x^2", "2x^2", "x^4", "x^8", "2x^4", "math", 1],
+        //     ["C/4", "C", "D", "F", "G", "sheet", 0]
+        // ];
 
-        // ^ this is javascript object. Can't be copied! Or at least not without major hassle
+        this.frage = [];
+        requestURL = 'https://api.myjson.com/bins/yutva';
 
-        this.frage = [
-            ["2x+x", "3x", "2x+x", "2x^2", "x", "math", 2],
-            ["D/4", "D", "E", "F", "F#", "sheet", 4],
-            ["Bird?", "Vogel", "Wurm", "Baum", "Bürde", "text", 0],
-            ["x^2+x^2", "2x^2", "x^4", "x^8", "2x^4", "math", 1],
-            ["C/4", "C", "D", "F", "G", "sheet", 0]
-        ];
     }
 
     // ["2x+x",      "3x",            "2x+x", "2x^2", "x",      "math",        2],
 
     //  ^ question    ^ solution            ^ answers b-d         ^ type       ^ amount of correctly answered
-    getQuestions() {
-        //return [...this.frage];
-        //returns copy of frage array
-        //right now this is the same as updateQuestions,
-        // final version here will include database work tho
 
-        //db work here...
+    getJSON() {
+
+        var request = new XMLHttpRequest();
+        request.open('GET', requestURL);
+        request.responseType = 'json';
+        request.send();
+
+        request.onload = function () {
+            let jsonarray = request.response;
+            console.log('Got from JSON... : ', jsonarray);
+            console.log('Got from JSON[0].question... : ', jsonarray[0].question);
+            console.log('Got from JSON length... : ', jsonarray.length);
+
+            m.setQuestions(jsonarray);
+        };
+
+
+    }
+
+    setQuestions(data) {
+        let i;
+        for (i = 0; i < data.length; i++) {
+            this.frage.push([data[i].question, data[i].answera, data[i].answerb, data[i].answerc, data[i].answerd, data[i].type, data[i].rights]);
+        }
+
+        console.log('Frage-Array is now...:', this.frage);
+
+    }
+
+    createFile() {
+        window.alert('TBA: Eigene lokale Datei erstellen.\n (Bisher ists aber so, dass es einfach nur über ein einzelnen Array läuft, was beim Reload wieder gelöscht wird.)');
     }
 
     saveQuestionM(data) {
@@ -92,6 +106,23 @@ class examView {
         q_ansd = document.getElementById('q_ansD');
         q_radio = document.getElementsByName('q_type');
 
+        //Startup Buttons
+
+        let startup = document.getElementsByClassName('startup_button');
+        for (let i = 0; i < startup.length; i++) {
+            let ele = startup[i];
+            ele.addEventListener('click', function () {
+                v.vp.dataChoice(ele.value);
+                document.getElementById('startup_box').style.display = 'none';
+                document.getElementById('tab').style.display="block";
+                let x = document.getElementsByClassName('tablinks');
+                for (let j = 0; j < x.length; j++) {
+                    x[j].disabled = false;
+                }
+
+            });
+        }
+
 
         //Button-Handler
 
@@ -109,24 +140,23 @@ class examView {
         //Next-Button
         document.getElementById('next_button').addEventListener('click', function () {
             v.nextQuestion();
+
         });
 
-        document.getElementById('start_button').addEventListener('click', function(){
-           v.renderQuestion();
-            document.getElementById('next_button').style.display="block";
-            document.getElementById('start_button').style.display="none";
+        document.getElementById('start_button').addEventListener('click', function () {
+            v.renderQuestion();
+            document.getElementById('next_button').style.display = "block";
+            document.getElementById('start_button').style.display = "none";
         });
 
-        document.getElementById('again_button').addEventListener('click', function(){
+        document.getElementById('again_button').addEventListener('click', function () {
             current = rights = wrongs = 0;
             v.clear('container');
             v.renderQuestion();
             document.getElementById('ex_tab').click();
         });
 
-        document.getElementById('next_button').style.display="none";
-
-
+        document.getElementById('next_button').style.display = "none";
 
 
     }
@@ -160,7 +190,7 @@ class examView {
     }
 
 
-    update(data){
+    update(data) {
 
         this.vfrage.push(data);
         console.log('new array in view:', this.vfrage);
@@ -256,13 +286,6 @@ class examView {
             this.renderSheet(this.vfrage[current][0]);
 
         }
-
-
-        console.log('current is: ', current);
-        console.log('length is: ', this.vfrage.length);
-        if (current === this.vfrage.length) {
-            document.getElementById('next_button').style.display = "none";
-        }
     }
 
     renderSheet(note) {
@@ -312,7 +335,7 @@ class examView {
 
     renderMath(formula, element) {
         katex.render(formula, element, {
-           throwOnError: false
+            throwOnError: false
         });
     }
 
@@ -326,23 +349,32 @@ class examView {
                 tobechecked = this.vfrage[i];
             }
         }
+
         this.vp.checkQuestion(tobechecked, check_q);
         this.clear('container');
-        this.renderQuestion();
 
-        check_q = "";
-        //reset check_q
+        if (current === this.vfrage.length) {
+            document.getElementById('next_button').style.display = "none";
+            document.getElementById('statistic_button').disabled = false;
+            //Ende der Fragen erreicht, keine neue Frage rendern.
+        } else {
+
+            this.renderQuestion();
+            check_q = "";
+            // Ende noch nicht erreicht, render neue Frage und resette check_q.
+        }
+
     }
 
 
-    showStatistic(){
+    showStatistic() {
 
         console.log('Right questions: ', rights);
         console.log('Wrong questions: ', wrongs);
 
         let s_b = document.createElement('div');
         s_b.setAttribute('class', 'statistic_value');
-        s_b.innerHTML = `Du hast ${rights} von ${rights+wrongs} Fragen richtig beantwortet.`;
+        s_b.innerHTML = `Du hast ${rights} von ${rights + wrongs} Fragen richtig beantwortet.`;
         document.getElementById('statistic_box').appendChild(s_b);
 
         document.getElementById('stat_tab').click();
@@ -373,14 +405,27 @@ class examPresenter {
 
     getQuestionsP() {
         //return this.pm.getQuestionsM();
+        this.pm.getQuestions();
+    }
+
+    dataChoice(value) {
+        console.log('value is: ', value);
+
+        if (value === 'own') {
+            this.pm.createFile();
+        }
+
+        if (value === 'json') {
+            this.pm.getJSON();
+        }
     }
 
     saveQuestion() {
 
-        for (let i = 0; i < q_radio.length; i++){
-            if(q_radio[i].checked){
+        for (let i = 0; i < q_radio.length; i++) {
+            if (q_radio[i].checked) {
                 q_type = q_radio[i].value;
-                console.log('Checkvalue: ',q_type );
+                console.log('Checkvalue: ', q_type);
             }
         }
 
@@ -440,13 +485,13 @@ class examPresenter {
         console.log('answer to check: ', answer);
 
         if (array) {
-        if (answer === array[1]) {
-            window.alert('Whee! Correct!');
-            rights = rights + 1;
-        } else {
-            window.alert('Wrong...sorry.');
-            wrongs = wrongs + 1;
-        }
+            if (answer === array[1]) {
+                window.alert('Whee! Correct!');
+                rights = rights + 1;
+            } else {
+                window.alert('Wrong...sorry.');
+                wrongs = wrongs + 1;
+            }
 
         } else {
             window.alert('Please answer.');

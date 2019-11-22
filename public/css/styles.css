@@ -3,7 +3,7 @@ body, textarea::placeholder, textarea::-webkit-input-placeholder, textarea:-moz-
     font-family: "Roboto", "Helvetica Neue", sans-serif;
 }
 
-h1, h2, h3, p, label {
+h1, h2, h3, p, label, div {
     font-family: "Roboto", "Helvetica Neue", sans-serif;
 }
 body input[type=text], textarea {
@@ -53,6 +53,7 @@ body textarea {
     border: 1px solid #ccc;
     border-radius: 2px;
     background-color: #3880ff;
+    display: none;
 
 }
 
@@ -78,6 +79,10 @@ body textarea {
     background-color: #3171e0;
 }
 
+.tab button:disabled, button:disabled{
+    background-color: #cccccc;
+}
+
 /* Style the tab content */
 .tabcontent {
     display: none;
@@ -89,7 +94,7 @@ body textarea {
 .ex_qu {
     /*height: 55px;*/
     margin: 15px;
-    border: 1px solid red;
+    border: 2px solid #3880ff;
     border-radius: 5px;
     text-align: center;
     padding: 10px;
@@ -101,17 +106,24 @@ body textarea {
     text-align: center;
     margin: auto;
     padding: 10px;
+    font-weight: bold;
 }
 
-#bottom {
+#startup_box {
     position: fixed;
-    bottom: 0;
-    width: 100%;
+    bottom: 30%;
+
 }
 
-#push_button{
-    background: #cccccc;
-    color: black;
+#startup_box h3, #startup_box div {
+    text-align: center;
+}
+
+.startup_button{
+    background: #3880ff;
+    width: 90%;
+    color: white;
+
 }
 
 
