@@ -1,12 +1,12 @@
 [
   {
-    "question": "Lorem",
-    "answera": "Ipsum",
-    "answerb": "Dolor",
-    "answerc": "Sit",
-    "answerd": "Amit",
+    "question": "Wann begann der erste Kreuzzug?",
+    "answera": "1096",
+    "answerb": "1099",
+    "answerc": "1080",
+    "answerd": "1045",
     "type": "text",
-    "rights": 0
+    "rights": 2
   },
   {
     "question": "D/4",
@@ -25,5 +25,123 @@
     "answerd": "2x^4",
     "type": "math",
     "rights": 8
+  },
+  {
+    "question": "C/3",
+    "answera": "C",
+    "answerb": "F",
+    "answerc": "C#",
+    "answerd": "A",
+    "type": "sheet",
+    "rights": 6
+  },
+  {
+    "question": "A/4",
+    "answera": "A",
+    "answerb": "F",
+    "answerc": "H",
+    "answerd": "G#",
+    "type": "sheet",
+    "rights": 0
+  },
+  {
+    "question": "x^2*x^2",
+    "answera": "x^4",
+    "answerb": "x^2",
+    "answerc": "2x^2",
+    "answerd": "4x",
+    "type": "math",
+    "rights": 0
+  },
+  {
+    "question": "E/5",
+    "answera": "E",
+    "answerb": "C",
+    "answerc": "A#",
+    "answerd": "H",
+    "type": "sheet",
+    "rights": 3
+  },
+  {
+    "question": "D/4",
+    "answera": "D",
+    "answerb": "E",
+    "answerc": "F",
+    "answerd": "F#",
+    "type": "sheet",
+    "rights": 3
+  },
+  {
+    "question": "2x + 2x",
+    "answera": "4x",
+    "answerb": "x^2",
+    "answerc": "2x^2",
+    "answerd": "x",
+    "type": "math",
+    "rights": 3
+  },
+  {
+    "question": "F/4",
+    "answera": "F",
+    "answerb": "D",
+    "answerc": "E",
+    "answerd": "G",
+    "type": "sheet",
+    "rights": 5
+  },
+  {
+    "question": "G/4",
+    "answera": "G",
+    "answerb": "E",
+    "answerc": "F",
+    "answerd": "F#",
+    "type": "sheet",
+    "rights": 3
+  },
+  {
+    "question": "B/4",
+    "answera": "H",
+    "answerb": "G",
+    "answerc": "A",
+    "answerd": "C#",
+    "type": "sheet",
+    "rights": 3
+  },
+  {
+    "question": "Wann wurde Michael Jackson geboren?",
+    "answera": "1958",
+    "answerb": "1950",
+    "answerc": "1980",
+    "answerd": "1975",
+    "type": "text",
+    "rights": 0
+  },
+  {
+    "question": "D#/4",
+    "answera": "D#",
+    "answerb": "E",
+    "answerc": "F",
+    "answerd": "F#",
+    "type": "sheet",
+    "rights": 0
+  },
+  {
+    "question": "Was bedeutet Bird?",
+    "answera": "Vogel",
+    "answerb": "Welle",
+    "answerc": "Bürde",
+    "answerd": "Nichts, dieses Wort gibts nicht.",
+    "type": "text",
+    "rights": 1
+  },
+
+  {
+    "question": "D/4",
+    "answera": "D",
+    "answerb": "E",
+    "answerc": "F",
+    "answerd": "F#",
+    "type": "sheet",
+    "rights": 4
   }
 ]

@@ -126,5 +126,23 @@ body textarea {
 
 }
 
+#delete_box {
+    display: none;
+}
+
+#delete_box div {
+    border: 2px solid #3880ff;
+    min-height: 75px;
+}
+
+#delete_button {
+    width: initial;
+    float: right;
+}
+
+.delete_qu {
+    display: inline-block;
+}
+
 
 

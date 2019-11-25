@@ -34,7 +34,7 @@ class examModel {
         // ];
 
         this.frage = [];
-        requestURL = 'https://api.myjson.com/bins/yutva';
+        requestURL = 'https://api.myjson.com/bins/trtfy';
 
     }
 
@@ -51,12 +51,18 @@ class examModel {
 
         request.onload = function () {
             let jsonarray = request.response;
-            console.log('Got from JSON... : ', jsonarray);
-            console.log('Got from JSON[0].question... : ', jsonarray[0].question);
-            console.log('Got from JSON length... : ', jsonarray.length);
+
+
+            if(Notification.permission === 'granted') {
+                navigator.serviceWorker.getRegistration().then(function(reg) {
+                    reg.showNotification('JSON erfolgreich geladen.');
+                });
+            }
+
 
             m.setQuestions(jsonarray);
         };
+
 
 
     }
@@ -67,7 +73,6 @@ class examModel {
             this.frage.push([data[i].question, data[i].answera, data[i].answerb, data[i].answerc, data[i].answerd, data[i].type, data[i].rights]);
         }
 
-        console.log('Frage-Array is now...:', this.frage);
 
     }
 
@@ -79,9 +84,10 @@ class examModel {
         this.frage.push(data);
     }
 
-    updateQuestionsM() {
-        return [...this.frage];
+    updateModel(data) {
+        //return [...this.frage];
         //returns copy of frage array
+        this.frage.push(data);
 
     }
 
@@ -154,6 +160,8 @@ class examView {
             v.clear('container');
             v.renderQuestion();
             document.getElementById('ex_tab').click();
+            document.getElementById('next_button').style.display = "block";
+            document.getElementById('statistic_button').disabled = true;
         });
 
         document.getElementById('next_button').style.display = "none";
@@ -190,10 +198,9 @@ class examView {
     }
 
 
-    update(data) {
+    updateView(data) {
 
         this.vfrage.push(data);
-        console.log('new array in view:', this.vfrage);
     }
 
 
@@ -214,26 +221,51 @@ class examView {
         //elements must be newly created every single time!
         //otherwise only one will be created and added.
 
-        e_ansa.textContent = this.vfrage[current][1];
-        e_ansb.textContent = this.vfrage[current][2];
-        e_ansc.textContent = this.vfrage[current][3];
-        e_ansd.textContent = this.vfrage[current][4];
+        let mixer = [];
+        let random = Math.floor((Math.random() * 4) + 1);
+
+        if (random === 1){
+            mixer = [2, 4, 1, 3];
+        }
+
+        if (random === 2) {
+            mixer = [4, 3, 1, 2];
+        }
+
+        if (random === 3) {
+            mixer = [3, 2, 4, 1];
+        }
+
+        if (random === 4) {
+            mixer = [1, 3, 4, 2];
+        }
+
+        // e_ansa.textContent = this.vfrage[current][1];
+        // e_ansb.textContent = this.vfrage[current][2];
+        // e_ansc.textContent = this.vfrage[current][3];
+        // e_ansd.textContent = this.vfrage[current][4];
+
+        e_ansa.textContent = this.vfrage[current][mixer[0]];
+        e_ansb.textContent = this.vfrage[current][mixer[1]];
+        e_ansc.textContent = this.vfrage[current][mixer[2]];
+        e_ansd.textContent = this.vfrage[current][mixer[3]];
+
 
         e_ansa.addEventListener('click', function () {
             check_q = e_ansa.textContent;
-            console.log(check_q);
+            //console.log(check_q);
         });
         e_ansb.addEventListener('click', function () {
             check_q = e_ansb.textContent;
-            console.log(check_q);
+            //console.log(check_q);
         });
         e_ansc.addEventListener('click', function () {
             check_q = e_ansc.textContent;
-            console.log(check_q);
+            //console.log(check_q);
         });
         e_ansd.addEventListener('click', function () {
             check_q = e_ansd.textContent;
-            console.log(check_q);
+            //console.log(check_q);
         });
 
         if (this.vfrage[current][5] === 'text') {
@@ -294,7 +326,6 @@ class examView {
         // Create an SVG renderer and attach it to the DIV element named "boo".
         //const div = document.getElementById(canvas);
         const div = document.getElementById('sheet_canvas');
-        console.log(div);
         const renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
 
         // Configure the rendering context.
@@ -309,8 +340,6 @@ class examView {
         // stave.addClef('treble').addTimeSignature('4/4');
         stave.addClef('treble');
 
-        // const noteValue = this.sheetValueRef.nativeElement.innerText;
-        // console.log(noteValue);
         // Connect it to the rendering context and draw!
         stave.setContext(context).draw();
 
@@ -369,15 +398,38 @@ class examView {
 
     showStatistic() {
 
-        console.log('Right questions: ', rights);
-        console.log('Wrong questions: ', wrongs);
-
         let s_b = document.createElement('div');
         s_b.setAttribute('class', 'statistic_value');
         s_b.innerHTML = `Du hast ${rights} von ${rights + wrongs} Fragen richtig beantwortet.`;
         document.getElementById('statistic_box').appendChild(s_b);
 
         document.getElementById('stat_tab').click();
+
+        for (let i = 0; i < this.vfrage.length; i++){
+            if (this.vfrage[i][6] >= 5){
+                document.getElementById('delete_box').style.display="block";
+
+                let x = document.createElement('div');
+                let y = document.createElement('p');
+                let z = document.createElement('button');
+
+                y.setAttribute('class', 'delete_qu');
+                z.setAttribute('class', 'btn');
+                z.setAttribute('id', 'delete_button');
+
+                y.textContent = this.vfrage[i][1];
+                z.textContent = 'X';
+
+                x.appendChild(y);
+                x.appendChild(z);
+
+                document.getElementById('delete_box').appendChild(x);
+
+                z.addEventListener('click', function(){
+                   p.deleteQuestion(this.vfrage[i][1]);
+                });
+            }
+        }
     }
 }
 
@@ -409,7 +461,6 @@ class examPresenter {
     }
 
     dataChoice(value) {
-        console.log('value is: ', value);
 
         if (value === 'own') {
             this.pm.createFile();
@@ -425,7 +476,6 @@ class examPresenter {
         for (let i = 0; i < q_radio.length; i++) {
             if (q_radio[i].checked) {
                 q_type = q_radio[i].value;
-                console.log('Checkvalue: ', q_type);
             }
         }
 
@@ -444,52 +494,35 @@ class examPresenter {
     updateQuestions(data) {
         //this.pv.vfrage.push(data);
 
-        this.pv.update(data);
-        // let container = document.getElementById('exam_box');
-        // let e_div = document.createElement('div');
-        // e_div.setAttribute('class', 'ex_qu');
-        // e_text = document.createElement('textarea');
-        // e_text.setAttribute('class', 'e_text');
-        // e_ansa = document.createElement('button');
-        // e_ansa.setAttribute('class', 'e_ansa');
-        // e_ansb = document.createElement('button');
-        // e_ansb.setAttribute('class', 'e_ansb');
-        // e_ansc = document.createElement('button');
-        // e_ansc.setAttribute('class', 'e_ansc');
-        // e_ansd = document.createElement('button');
-        // e_ansd.setAttribute('class', 'e_ansd');
-        //
-        //
-        // e_text.value = data[1];
-        // e_ansa.textContent = data[2];
-        // e_ansb.textContent = data[3];
-        // e_ansc.textContent = data[4];
-        // e_ansd.textContent = data[5];
-        //
-        // e_div.appendChild(e_text);
-        // e_div.appendChild(e_ansa);
-        // e_div.appendChild(e_ansb);
-        // e_div.appendChild(e_ansc);
-        // e_div.appendChild(e_ansd);
-        //
-        // container.appendChild(e_div);
+        this.pm.updateModel(data);
+        this.pv.updateView(data);
+        console.log('Array was updated: ', this.pv.vfrage);
 
-        console.log('new array: ', this.pv.vfrage);
+
+
     }
 
 
     checkQuestion(array, answer) {
-        //this.pm.checkQuestion(answer);
-
-        console.log('array to check: ', array);
-        console.log('answer to check: ', answer);
 
         if (array) {
             if (answer === array[1]) {
-                window.alert('Whee! Correct!');
+                //window.alert('Whee! Correct!');
                 rights = rights + 1;
+                console.log('Right!');
+
+                array[6] = array[6] + 1;
+
+                for (let i = 0; i < this.pm.frage.length; i++){
+                    if (array[0] === this.pm.frage[i][0]){
+                        this.pm.frage[i][6] = this.pv.vfrage[i][6] = array[6];
+                    }
+                }
+
+
+
             } else {
-                window.alert('Wrong...sorry.');
+                //window.alert('Wrong...sorry.');
                 wrongs = wrongs + 1;
             }
 
@@ -498,6 +531,27 @@ class examPresenter {
         }
 
     }
+
+    deleteQuestion(question){
+
+        // let x = 0;
+        // while (x < this.pv.vfrage.length){
+        //     let filtered_array = this.pv.vfrage.filter(
+        //         que => que[x][0] !== question);
+        //
+        // }
+        let y;
+
+        for (let x = 0; x < this.pv.vfrage.length; x++){
+            if (this.pv.vfrage[x][0] === question) {
+                //delete...
+            }
+        }
+
+
+
+    }
+
 
 
     // ****~~~****~~~****~~~Statistik-Zeug~~~****~~~****~~~****
