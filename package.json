@@ -1,9 +1,9 @@
 {
   "name": "examHelper_oF",
   "version": "1.0.0",
-  "main": "server.js",
   "directories": "",
   "dependencies": {
+    "firebase-tools": "^7.8.1",
     "http-server": "^0.11.1",
     "katex": "^0.11.1",
     "ngrok": "^3.2.5",
