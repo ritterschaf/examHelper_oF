@@ -10,7 +10,7 @@
     "requirejs": "^2.3.6",
     "sqlite3": "latest",
     "stream-browserify": "^2.0.2",
-    "swiper": "^5.2.0",
+    "swiper": "^6.5.1",
     "vexflow": "^1.2.89"
   }
 }
